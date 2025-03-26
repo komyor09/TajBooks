@@ -25,7 +25,7 @@ class Cart
     // 2. Получить товары корзины
     public function get_cart_items()
     {
-        $sql = "SELECT books.title, books.price, Carts.quantity, books.id 
+        $sql = "SELECT books.title, books.price, Carts.quantity, books.id, books.image_path
                 FROM Carts 
                 JOIN books ON Carts.book_id = books.id 
                 WHERE Carts.user_id = ?";
@@ -101,6 +101,18 @@ class Cart
             }
         }
     }
+    public function increase_quantity($book_id) {
+        $stmt = $this->pdo->prepare("SELECT quantity FROM carts WHERE user_id = ? AND book_id = ?");
+        $stmt->execute([$this->user_id, $book_id]);
+        $item = $stmt->fetch();
+    
+        if ($item) {
+            // Увеличиваем количество на 1
+            $stmt = $this->pdo->prepare("UPDATE carts SET quantity = quantity + 1 WHERE user_id = ? AND book_id = ?");
+            $stmt->execute([$this->user_id, $book_id]);
+        }
+    }
+    
     
 }
 ?>

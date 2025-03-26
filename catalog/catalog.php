@@ -259,7 +259,7 @@
                 </li>
                 <li class="nav-item ms-3">
                 <a href="https://instagram.com/" class="nav-link text-white">
-                        <i class="fas fa-telegram me-2"></i>Инстаграм    
+                <i class="fas fa-instagram me-2"></i>Инстаграм       
                     </a>
                     <ul>
                         <li><a href="https://instagram.com/taj.books/" class="nav-link text-white">Публикации</a></li>

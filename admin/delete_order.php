@@ -17,12 +17,17 @@ $order_id = $_POST['order_id'];
 
 // Удаление заказа из базы данных
 try {
-    // Подготовка SQL-запроса для удаления заказа
+    // Удаление связанных товаров в таблице order_items
+    $stmt = $pdo->prepare("DELETE FROM order_items WHERE order_id = :order_id");
+    $stmt->execute([':order_id' => $order_id]);
+
+    // Теперь можно удалить заказ
     $stmt = $pdo->prepare("DELETE FROM orders WHERE id = :id");
     $stmt->execute([':id' => $order_id]);
 
+
     // Перенаправление на страницу заказов после успешного удаления
-    header("Location: orders.php");
+    header("Location: ../admin/orders.php");
     exit();
 } catch (PDOException $e) {
     // Ошибка при удалении

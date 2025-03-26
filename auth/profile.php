@@ -129,13 +129,13 @@ if (!isset($_SESSION['user_id'])) {
             </div>
             <div class="card-body">
                 <p class="profile-info">Добро пожаловать в ваш личный кабинет! Здесь вы можете управлять своим аккаунтом, просматривать заказы и редактировать профиль.</p>
-                <a href="../order/orders.php" class="btn btn-primary"><i class="fas fa-box-open me-2"></i> Мои заказы</a>
-                <a href="../auth/settings.php" class="btn btn-primary"><i class="fas fa-cogs me-2"></i> Настройки профиля</a>
+                <a href="../order/orders.php" class="btn btn-primary-min"><i class="fas fa-box-open me-2"></i> Мои заказы</a>
+                <a href="../auth/settings.php" class="btn btn-primary-min"><i class="fas fa-cogs me-2"></i> Настройки профиля</a>
             </div>
         </div>
 
         <!-- Кнопка выхода -->
-        <a href="logout.php" class="logout-btn">
+        <a href="logout.php" class="logout-btn" style="color:white;">
             <i class="fas fa-sign-out-alt me-2"></i> Выйти
         </a>
     </div>
@@ -178,7 +178,7 @@ if (!isset($_SESSION['user_id'])) {
                 </li>
                 <li class="nav-item ms-3">
                 <a href="https://instagram.com/" class="nav-link text-white">
-                        <i class="fas fa-telegram me-2"></i>Инстаграм    
+                <i class="fas fa-instagram me-2"></i>Инстаграм       
                     </a>
                     <ul>
                         <li><a href="https://instagram.com/taj.books/" class="nav-link text-white">Публикации</a></li>

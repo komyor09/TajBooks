@@ -11,7 +11,7 @@ session_start();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="bg-light">
 
     <!-- Шапка -->
     <header class="bg-dark text-white py-3">
@@ -56,18 +56,18 @@ session_start();
             </ul>
         </nav>
     </header>
-        <!-- Сообщение при выходе -->
-        <?php if (isset($_SESSION['message'])): ?>
-        <div class="alert alert-success alert-custom text-center shadow" role="alert">
-            <i class="fas fa-check-circle me-2"></i> <?php echo $_SESSION['message']; ?>
-        </div>
-        <?php unset($_SESSION['message']); ?>
+
+    <!-- Сообщение при выходе -->
+    <?php if (isset($_SESSION['message'])): ?>
+    <div class="alert alert-success alert-custom text-center shadow" role="alert">
+        <i class="fas fa-check-circle me-2"></i> <?php echo $_SESSION['message']; ?>
+    </div>
+    <?php unset($_SESSION['message']); ?>
     <?php endif; ?>
 
-<body class="bg-light">
 <div class="container mt-5">
     <h1 class="text-center mb-4">Ваша корзина</h1>
-    <div class="card p-4 shadow-lg">
+    <div class="row">
         <?php
         require_once '../order/cartClass.php';
         require_once '../config/db.php';
@@ -84,29 +84,51 @@ session_start();
                 $book_id = intval($_POST['decrease_book_id']);
                 $cart->decrease_quantity($book_id);
             }
+            if (isset($_POST['increase_book_id'])) {
+                $book_id = intval($_POST['increase_book_id']);
+                $cart->increase_quantity($book_id);
+            }
         }
 
         $items = $cart->get_cart_items();
         $total = 0;
-
+        $quantity = 0;
         if (count($items) > 0): ?>
-            <ul class="list-group mb-3">
-                <?php foreach ($items as $item): ?>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <?php echo htmlspecialchars($item['title']); ?> - <?php echo htmlspecialchars($item['quantity']); ?> шт.
-                        <div>
-                            <span class="badge bg-primary rounded-pill"><?php echo htmlspecialchars($item['price']); ?> сомони</span>
+            <?php foreach ($items as $item): ?>
+                <div class="col-12 col-md-4">
+                    <div class="card mb-4 shadow-lg">
+                        <img src="<?php echo htmlspecialchars("../pics/" . $item['image_path']); ?>" class="card-img" alt="Book Image">
+                        <div class="card-body">
+                            <h5 class="card-title"><?php echo htmlspecialchars($item['title']); ?></h5>
+                            <p class="card-text">Цена: <?php echo htmlspecialchars($item['price']); ?> сомони</p>
+                            <p class="card-text">Количество: <?php echo htmlspecialchars($item['quantity']); ?> шт.</p>
+
+                            <!-- Управление количеством -->
+                            <form method="POST" action="" class="d-inline">
+                                <input type="hidden" name="decrease_book_id" value="<?php echo htmlspecialchars($item['book_id']); ?>">
+                                <button type="submit" class="btn btn-warning btn-sm">-</button>
+                            </form>
+                            <form method="POST" action="" class="d-inline">
+                                <input type="hidden" name="increase_book_id" value="<?php echo htmlspecialchars($item['book_id']); ?>">
+                                <button type="submit" class="btn btn-success btn-sm">+</button>
+                            </form>
+
+                            <!-- Удаление книги -->
                             <form method="POST" action="" class="d-inline">
                                 <input type="hidden" name="remove_book_id" value="<?php echo htmlspecialchars($item['book_id']); ?>">
                                 <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
                             </form>
                         </div>
-                    </li>
-                    <?php $total += $item['price'] * $item['quantity']; ?>
-                <?php endforeach; ?>
-            </ul>
-            <div class="d-flex justify-content-between">
+                    </div>
+                </div>
+                <?php
+                    $total += $item['price'] * $item['quantity'];
+                    $quantity += $item['quantity'];
+                ?>
+            <?php endforeach; ?>
+            <div class="d-flex justify-content-between mt-4">
                 <h4>Итого:</h4>
+                <h4><?php echo htmlspecialchars($quantity); ?> шт. книг</h4>
                 <h4><?php echo htmlspecialchars($total); ?> сомони</h4>
             </div>
             <div class="text-center mt-4">
@@ -117,52 +139,40 @@ session_start();
         <?php endif; ?>
     </div>
 </div>
+
 <p class="mt-5"></p>
+
 <footer class="bg-dark text-white py-3">
-        <nav class="container d-flex justify-content-between align-items-center">
-            <!-- Логотип сайта с именем -->
-            <a href="../index.php" class="text-white d-flex align-items-center">
-                <img src="../pics/logo.jpg" alt="Logo" class="me-1" style="width: 50px;">
-                <div class="row">
+    <nav class="container d-flex justify-content-between align-items-center">
+        <a href="../index.php" class="text-white d-flex align-items-center">
+            <img src="../pics/logo.jpg" alt="Logo" class="me-1" style="width: 50px;">
+            <div class="row">
                 <span class="h4 text-center">TajBooks</span>
                 <span class="h6 text-center">Read Learn Grow</span>
-                </div>
-            </a>
-
-            <!-- Меню с иконками -->
-            <ul class="nav ms-auto">
-                <li class="nav-item ms-3">
-                    <a href="../faq.php" class="nav-link text-white">
-                        <i class="fas fa-question me-2"></i>FAQ
-                    </a>
-                    <ul>
-                        <li><a href="../faq.php/#q1" class="nav-link text-white">Question 1</a></li>
-                        <li><a href="../faq.php/#q2" class="nav-link text-white">Question 2</a></li>
-                        <li><a href="../faq.php/#q3" class="nav-link text-white">Question 3</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item ms-3">
+            </div>
+        </a>
+        <ul class="nav ms-auto">
+            <li class="nav-item ms-3">
+                <a href="../faq.php" class="nav-link text-white">
+                    <i class="fas fa-question me-2"></i>FAQ
+                </a>
+            </li>
+            <li class="nav-item ms-3">
                 <a href="https://t.me/" class="nav-link text-white">
-                        <i class="fas fa-telegram me-2"></i>Телеграм    
-                    </a>
-                    <ul>
-                        <li><a href="https://t.me/taj_books" class="nav-link text-white">Канал</a></li>
-                        <li><a href="https://t.me/komyor_06" class="nav-link text-white">Аккаунт для заказа</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item ms-3">
+                    <i class="fas fa-telegram me-2"></i>Телеграм    
+                </a>
+            </li>
+            <li class="nav-item ms-3">
                 <a href="https://instagram.com/" class="nav-link text-white">
-                        <i class="fas fa-telegram me-2"></i>Инстаграм    
-                    </a>
-                    <ul>
-                        <li><a href="https://instagram.com/taj.books/" class="nav-link text-white">Публикации</a></li>
-                        <li><a href="https://instagram.com/" class="nav-link text-white">Аккаунт для заказа</a></li>
-                    </ul>
-                </li>
-        </nav>
-        <p class="text-center mb-4"></p>
-        <p class="text-center mb-2 py-2">&copy; 2025 TajBooks. Все права защищены.</p>
+                    <i class="fas fa-instagram me-2"></i>Инстаграм       
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <p class="text-center mb-4"></p>
+    <p class="text-center mb-2 py-2">&copy; 2025 TajBooks. Все права защищены.</p>
 </footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -105,19 +105,46 @@ try {
                     <td><?= htmlspecialchars($order['createdAt']) ?></td>
                     <td>
                         <?php
-                        switch ($order['status']) {
-                            case 'pending': echo 'Ожидает'; break;
-                            case 'shipped': echo 'Отправлен'; break;
-                            case 'completed': echo 'Завершён'; break;
-                            default: echo 'Неизвестен'; break;
-                        }
+                            if ($order['status'] == 'ОТМЕНЕНО') echo '<span class="status cancelled text-danger" style="border-radius: 10px; padding: 5px; background-color: rgba(255, 0, 0, 0.3); color: white; font-weight: bold;">'; // Красный
+                            if ($order['status'] == 'ДОСТАВЛЕНО') echo '<span class="status success text-success" style="border-radius: 10px; padding: 5px; background-color: rgba(40, 167, 69, 0.3); color: white; font-weight: bold;">'; // Зеленый
+                            if ($order['status'] == 'В ПРОЦЕССЕ') echo '<span class="status in-progress text-warning" style="border-radius: 10px; padding: 5px; background-color: rgba(255, 193, 7, 0.3); color: black; font-weight: bold;">'; // Желтый
+                            if ($order['status'] == 'ОТПРАВЛЕНО') echo '<span class="status sent text-dark" style="border-radius: 10px; padding: 5px; background-color: rgba(0, 0, 0, 0.3); color: white; font-weight: bold;">'; // Чёрный
+                            echo htmlspecialchars($order['status']) . "</span>";
                         ?>
                     </td>
                     <td>
                         <!-- Кнопка для изменения статуса заказа -->
-                        <a href="edit_order.php?id=<?= htmlspecialchars($order['id']) ?>" class="btn btn-warning">
+                        <a href="#" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#statusModal<?= htmlspecialchars($order['id']) ?>">
                             <i class="fas fa-edit"></i> Изменить статус
                         </a>
+
+                        <!-- Модальное окно для изменения статуса -->
+                        <div class="modal fade" id="statusModal<?= htmlspecialchars($order['id']) ?>" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="statusModalLabel">Изменить статус заказа #<?= htmlspecialchars($order['id']) ?></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="edit_order.php?id=<?= htmlspecialchars($order['id']) ?>" method="POST">
+                                            <div class="mb-3">
+                                                <label for="status" class="form-label">Статус заказа</label>
+                                                <select name="status" id="status" class="form-select" required>
+                                                    <option value="НОВЫЙ" <?= ($order['status'] == 'НОВЫЙ') ? 'selected' : '' ?>>НОВЫЙ</option>
+                                                    <option value="В ПРОЦЕССЕ" <?= ($order['status'] == 'В ПРОЦЕССЕ') ? 'selected' : '' ?>>В ПРОЦЕССЕ</option>
+                                                    <option value="ОТПРАВЛЕНО" <?= ($order['status'] == 'ОТПРАВЛЕНО') ? 'selected' : '' ?>>ОТПРАВЛЕНО</option>
+                                                    <option value="ДОСТАВЛЕНО" <?= ($order['status'] == 'ДОСТАВЛЕНО') ? 'selected' : '' ?>>ДОСТАВЛЕНО</option>
+                                                    <option value="ОТМЕНЕНО" <?= ($order['status'] == 'ОТМЕНЕНО') ? 'selected' : '' ?>>ОТМЕНЕНО</option>
+                                                </select>
+                                            </div>
+                                            <button type="submit" class="btn btn-success">Сохранить изменения</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Кнопка для удаления заказа -->
                         <form action="delete_order.php" method="POST" class="d-inline">
                             <input type="hidden" name="order_id" value="<?= htmlspecialchars($order['id']) ?>">

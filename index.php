@@ -1,13 +1,12 @@
 <?php
-session_start(); // Запуск сессии
+session_start();
 
-// Если email уже сохранён в сессии, можно использовать его
 $email = $_SESSION['email'] ?? '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($_POST['reg_email']) && filter_var($_POST['reg_email'], FILTER_VALIDATE_EMAIL)) {
-        $_SESSION['email'] = $_POST['reg_email']; // Сохраняем email в сессию
-        header("Location: ../auth/register.php"); // Перезагрузка страницы, чтобы обновить сессию
+        $_SESSION['email'] = $_POST['reg_email'];
+        header("Location: ../auth/register.php");
         exit();
     } else {
         $error = "Введите корректный email!";
@@ -87,13 +86,14 @@ function getPopularBooks($conn, $limit, $offset) {
 <?php endif; ?>
 <div class="hero">
     <div>
-        <h1 class="display-3">Добро пожаловать в TajBooks</h1>
-        <p class="lead">Погрузитесь в мир удивительных книг!</p>
-        <a href="#carouselExample" class="btn btn-primary btn-lg">Погнали</a>
+        <h1 class="display-1">Добро пожаловать в TajBooks</h1>
+        <p class="display-5">Погрузитесь в мир удивительных книг!</p>
+        <a href="#carouselExample" class="btn btn-primary">Погнали</a>
     </div>
 </div>
 
     <div class="container my-5 py-5" id='carouselExample'>
+    <h1 class="text-center"> Популярние </h1>
         <div class="carousel-container my-5">
             <!-- Кнопка слайдера влево -->
             <button class="btn carousel-btn carousel-btn-left" id="prevBtn">←</button>
@@ -202,7 +202,7 @@ function getPopularBooks($conn, $limit, $offset) {
                 </li>
                 <li class="nav-item ms-3">
                 <a href="https://instagram.com/" class="nav-link text-white">
-                        <i class="fas fa-telegram me-2"></i>Инстаграм    
+                <i class="fas fa-instagram me-2"></i>Инстаграм     
                     </a>
                     <ul>
                         <li><a href="https://instagram.com/taj.books/" class="nav-link text-white">Публикации</a></li>

@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = $pdo->prepare("UPDATE orders SET status = :status WHERE id = :id");
         $stmt->execute([':status' => $status, ':id' => $order_id]);
         
-        header("Location: orders.php");
+        header("Location: ../admin/orders.php");
         exit();
     } catch (PDOException $e) {
         $error = "Ошибка обновления статуса: " . $e->getMessage();
@@ -62,13 +62,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="mb-3">
             <label for="status" class="form-label">Статус заказа</label>
             <select name="status" id="status" class="form-select" required>
-                <option value="pending" <?= ($order['status'] == 'pending') ? 'selected' : '' ?>>Ожидает</option>
-                <option value="shipped" <?= ($order['status'] == 'shipped') ? 'selected' : '' ?>>Отправлен</option>
-                <option value="completed" <?= ($order['status'] == 'completed') ? 'selected' : '' ?>>Завершён</option>
+                <option value="НОВЫЙ" <?= ($order['status'] == 'НОВЫЙ') ? 'selected' : '' ?>>НОВЫЙ</option>
+                <option value="В ПРОЦЕССЕ" <?= ($order['status'] == 'В ПРОЦЕССЕ') ? 'selected' : '' ?>>В ПРОЦЕССЕ</option>
+                <option value="ОТПРАВЛЕНО" <?= ($order['status'] == 'ОТПРАВЛЕНО') ? 'selected' : '' ?>>ОТПРАВЛЕНО</option>
+                <option value="ДОСТАВЛЕНО" <?= ($order['status'] == 'ДОСТАВЛЕНО') ? 'selected' : '' ?>>ДОСТАВЛЕНО</option>
+                <option value="ОТМЕНЕНО" <?= ($order['status'] == 'ОТМЕНЕНО') ? 'selected' : '' ?>>ОТМЕНЕНО</option>
             </select>
         </div>
         <button type="submit" class="btn btn-success">Сохранить изменения</button>
     </form>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

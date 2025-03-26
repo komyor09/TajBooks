@@ -124,9 +124,13 @@ $pdo = null;
                                 <td><?= htmlspecialchars($order['id']) ?></td> <!-- Используем id заказа -->
                                 <td><?= htmlspecialchars($order['order_date']) ?></td>
                                 <td>
-                                    <span class="status <?= strtolower($order['status']) ?>">
-                                        <?= htmlspecialchars($order['status']) ?>
-                                    </span>
+                                    <?php
+                                if ($order['status'] == 'ОТМЕНЕНО') echo '<span class="status cancelled text-danger" style="border-radius: 10px; padding: 5px; background-color: rgba(255, 0, 0, 0.3); color: white; font-weight: bold;">'; // Красный
+                                if ($order['status'] == 'ДОСТАВЛЕНО') echo '<span class="status success text-success" style="border-radius: 10px; padding: 5px; background-color: rgba(40, 167, 69, 0.3); color: white; font-weight: bold;">'; // Зеленый
+                                if ($order['status'] == 'В ПРОЦЕССЕ') echo '<span class="status in-progress text-warning" style="border-radius: 10px; padding: 5px; background-color: rgba(255, 193, 7, 0.3); color: black; font-weight: bold;">'; // Желтый
+                                if ($order['status'] == 'ОТПРАВЛЕНО') echo '<span class="status sent text-dark" style="border-radius: 10px; padding: 5px; background-color: rgba(0, 0, 0, 0.3); color: white; font-weight: bold;">'; // Чёрный
+                                echo htmlspecialchars($order['status']) . "</span>";
+                            ?>
                                 </td>
                                 <td><?= htmlspecialchars($order['total_amount']) ?> рублей</td>
                                 <td>
@@ -182,7 +186,7 @@ $pdo = null;
                 </li>
                 <li class="nav-item ms-3">
                 <a href="https://instagram.com/" class="nav-link text-white">
-                        <i class="fas fa-telegram me-2"></i>Инстаграм    
+                        <i class="fas fa-instagram me-2"></i>Инстаграм
                     </a>
                     <ul>
                         <li><a href="https://instagram.com/taj.books/" class="nav-link text-white">Публикации</a></li>

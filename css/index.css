@@ -38,7 +38,18 @@ button {
 button:hover {
     background-color: #218838;
 }
-
+.hero {
+    height: 100vh;
+    background: url('../pics/beachreading.jpg') center/cover;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    animation: fadeIn 1.5s ease-in-out;
+    box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.4);
+}
 /* Сообщения об ошибках */
 .error {
     color: red;
@@ -72,16 +83,7 @@ button:hover {
     opacity: 0;
 }
 
-.hero {
-    height: 700px;
-    background: url('../pics/beachreading.jpg') center/cover;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: white;
-    animation: fadeIn 1.5s ease-in-out;
-    box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.4);
-}
+
 .alert-custom {
     position: fixed;
     top: 20px;
@@ -97,10 +99,40 @@ button:hover {
 }
 .btn-primary {
     background: #1774ff;
+    border-radius: 10px;
+    transition: transform 0.3s ease, background 0.3s ease;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-primary:hover {
+    background: #05429d;
+    transform: scale(1.05);
+}
+.btn-primar-hero {
+    background: #1774ff;
+    border-radius: 10px;
+    transition: transform 0.3s ease, background 0.3s ease;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 20px;
+    font-size: 2.5vh;
+    width: 8vw;
+    height: 8vh;
+}
+
+.btn-primary-hero:hover {
+    background: #05429d;
+    transform: scale(1.05);
+}
+.btn-primary-min {
+    color: white;
+    background: #1774ff;
     border: none;
     transition: transform 0.3s ease, background 0.3s ease;
 }
-.btn-primary:hover {
+.btn-primary-min:hover {
+    color: white;
     background: #05429d;
     transform: scale(1.05);
 }
