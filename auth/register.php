@@ -1,8 +1,6 @@
 <?php
-// Подключаем файл для работы с базой данных
 require_once '../config/db.php';
 
-// Переменные для сообщений
 $message = '';
 $message_type = '';
 
@@ -11,42 +9,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $_POST['email'] = $_POST['reg_email'];
     }
 };
-// Проверка, если форма отправлена
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // Получаем данные из формы и убираем пробелы
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
     $email = trim($_POST['email']);
 
-    // Проверка на пустые значения
     if (empty($username) || empty($password) || empty($email)) {
         $message = "Все поля должны быть заполнены!";
         $message_type = "error";
     }
-    // Проверка корректности email
     elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $message = "Неверный формат email!";
         $message_type = "error";
     }
     else {
-        // Хешируем пароль с использованием password_hash
         $hashed_password = md5($password);
-        // Проверяем, есть ли уже такой пользователь
         $query = "SELECT * FROM users WHERE username = :username OR email = :email";
         $stmt = $pdo->prepare($query);
         $stmt->execute(['username' => $username, 'email' => $email]);
 
         if ($stmt->rowCount() > 0) {
             $message = "Пользователь с таким именем или email уже существует!";
-            $message_type = "error";  // Тип ошибки
+            $message_type = "error"; 
         }
         else {
-            // Вставляем нового пользователя в базу данных
             $query = "INSERT INTO users (username, password, email, role, createdAt) 
                     VALUES (:username, :password, :email, 'user', CURRENT_TIMESTAMP)";
             $stmt = $pdo->prepare($query);
-            // Добавляем параметры для всех переменных в запросе
             $stmt->execute([
                 'username' => $username,
                 'password' => $hashed_password,
@@ -60,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['username'] = $username;
             $_SESSION['email'] = $email;
             $message = "Вы успешно зарегистрировались!";
-            $message_type = "success";  // Тип успеха
+            $message_type = "success";  
         }
     }
 }
@@ -79,7 +69,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../css/index.css">
 
     <style>
-        /* Стили для контейнера с сообщением */
         .message {
             padding: 15px;
             margin: 20px;
@@ -98,7 +87,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: white;
         }
 
-        /* Стили для формы */
         .signin {
             display: flex;
             flex-direction: column;
@@ -187,51 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <p></p>
 
-    <!-- Подвал -->
-    <footer class="bg-dark text-white py-3">
-        <nav class="container d-flex justify-content-between align-items-center">
-            <!-- Логотип сайта с именем -->
-            <a href="../index.php" class="text-white d-flex align-items-center">
-                <img src="../pics/logo.jpg" alt="Logo" class="me-1" style="width: 50px;">
-                <div class="row">
-                <span class="h4 text-center">TajBooks</span>
-                <span class="h6 text-center">Read Learn Grow</span>
-                </div>
-            </a>
+    <?= require_once "../footer.php"; ?>
 
-            <!-- Меню с иконками -->
-            <ul class="nav ms-auto">
-                <li class="nav-item ms-3">
-                    <a href="../faq.php" class="nav-link text-white">
-                        <i class="fas fa-question me-2"></i>FAQ
-                    </a>
-                    <ul>
-                        <li><a href="../faq.php/#q1" class="nav-link text-white">Question 1</a></li>
-                        <li><a href="../faq.php/#q2" class="nav-link text-white">Question 2</a></li>
-                        <li><a href="../faq.php/#q3" class="nav-link text-white">Question 3</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item ms-3">
-                <a href="https://t.me/" class="nav-link text-white">
-                        <i class="fas fa-telegram me-2"></i>Телеграм    
-                    </a>
-                    <ul>
-                        <li><a href="https://t.me/taj_books" class="nav-link text-white">Канал</a></li>
-                        <li><a href="https://t.me/komyor_06" class="nav-link text-white">Аккаунт для заказа</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item ms-3">
-                <a href="https://instagram.com/" class="nav-link text-white">
-                <i class="fas fa-instagram me-2"></i>Инстаграм       
-                    </a>
-                    <ul>
-                        <li><a href="https://instagram.com/taj.books/" class="nav-link text-white">Публикации</a></li>
-                        <li><a href="https://instagram.com/" class="nav-link text-white">Аккаунт для заказа</a></li>
-                    </ul>
-                </li>
-        </nav>
-        <p class="text-center mb-4"></p>
-        <p class="text-center mb-2 py-2">&copy; 2025 TajBooks. Все права защищены.</p>
-</footer>
 </body>
 </html>

@@ -82,11 +82,9 @@ class Book
 
     public function delete($id)
     {
-        // Start a transaction
         $this->conn->begin_transaction();
     
         try {
-            // Delete from Carts table where book_id matches
             $sql1 = "DELETE FROM Carts WHERE book_id = ?";
             $stmt1 = $this->conn->prepare($sql1);
             $stmt1->bind_param("i", $id);
@@ -95,7 +93,6 @@ class Book
                 throw new Exception("Ошибка при удалении книги из корзины: " . $stmt1->error);
             }
     
-            // Delete from Reviews table where book_id matches
             $sql2 = "DELETE FROM Reviews WHERE book_id = ?";
             $stmt2 = $this->conn->prepare($sql2);
             $stmt2->bind_param("i", $id);
@@ -104,7 +101,6 @@ class Book
                 throw new Exception("Ошибка при удалении отзыва: " . $stmt2->error);
             }
     
-            // Delete from Order_Items table where book_id matches
             $sql3 = "DELETE FROM Order_Items WHERE book_id = ?";
             $stmt3 = $this->conn->prepare($sql3);
             $stmt3->bind_param("i", $id);
@@ -113,7 +109,6 @@ class Book
                 throw new Exception("Ошибка при удалении книги из заказов: " . $stmt3->error);
             }
     
-            // Delete from Books table where id matches
             $sql = "DELETE FROM Books WHERE id = ?";
             $stmt = $this->conn->prepare($sql);
             $stmt->bind_param("i", $id);
@@ -122,13 +117,11 @@ class Book
                 throw new Exception("Ошибка при удалении книги: " . $stmt->error);
             }
     
-            // Commit the transaction if all queries succeed
             $this->conn->commit();
     
             return "Книга успешно удалена!";
     
         } catch (Exception $e) {
-            // Rollback the transaction in case of an error
             $this->conn->rollback();
             return $e->getMessage();
         }
@@ -136,32 +129,27 @@ class Book
     
     public function deleteBook($id)
 {
-    // Начинаем транзакцию с использованием MySQLi
-    $this->conn->begin_transaction();  // Используем маленькие буквы для MySQLi
+    $this->conn->begin_transaction();  
 
     try {
-        // Удаляем книгу из корзины
         $sql = "DELETE FROM Carts WHERE book_id = ?";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("i", $id);  // Привязываем параметр id
+        $stmt->bind_param("i", $id);  
         if (!$stmt->execute()) {
             throw new Exception("Ошибка при удалении книги из корзины");
         }
 
-        // Удаляем книгу из таблицы Books
         $sql = "DELETE FROM Books WHERE id = ?";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("i", $id);  // Привязываем параметр id
+        $stmt->bind_param("i", $id); 
         if (!$stmt->execute()) {
             throw new Exception("Ошибка при удалении книги из таблицы Books");
         }
 
-        // Завершаем транзакцию
         $this->conn->commit();
 
         return "Книга успешно удалена!";
     } catch (Exception $e) {
-        // Если произошла ошибка, откатываем транзакцию
         $this->conn->rollback();
         error_log("Ошибка при удалении книги: " . $e->getMessage());
         return "Ошибка при удалении книги: " . $e->getMessage();

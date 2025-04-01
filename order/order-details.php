@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('../config/db.php');  // Подключаем файл с настройками БД
+include($_SERVER['DOCUMENT_ROOT'] . '/config/db.php');  // Подключаем файл с настройками БД
 
 // Проверяем, есть ли данные сессии для пользователя
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['order_id'])) {
@@ -12,44 +12,27 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['order_id'])) {
 $user_id = $_SESSION['user_id'];  // Идентификатор пользователя из сессии
 $order_id = $_SESSION['order_id'];  // Номер заказа из сессии
 
-// Запрос для получения данных о заказе
+// Запрос для получения данных о заказе с добавлением пути к изображению
 $sql = "SELECT o.createdAt AS order_date, o.status, o.price * oi.quantity AS total_amount, o.delivery_address,
-                oi.book_id, b.title AS book_title, b.price AS book_price, oi.quantity
+                oi.book_id, b.title AS book_title, b.price AS book_price, oi.quantity, b.image_path
         FROM Orders o
         JOIN Order_Items oi ON o.id = oi.order_id
         JOIN books b ON oi.book_id = b.id
-        WHERE o.user_id = :user_id AND o.id = :order_id";  // Обратите внимание на использование o.id вместо o.order_id
+        WHERE o.user_id = :user_id AND o.id = :order_id";
 
 $stmt = $pdo->prepare($sql);
-// echo 'User ID: ' . $user_id . ' Order ID: ' . $order_id;
 $stmt->execute(['user_id' => $user_id, 'order_id' => $order_id]);
 
 $order_details = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 // Проверка на наличие данных
 if (empty($order_details)) {
     echo "Заказ не найден.";
     exit();
 }
 
-$query = "SELECT book_id FROM Order_Items WHERE order_id = ?";
-$stmt = $pdo->prepare($query);
-$stmt->execute([$order_id]);
-$book_id = $stmt->fetchAll(PDO::FETCH_ASSOC)[0]['book_id'];
-
-$order_info = $order_details[0];  // Все элементы из одного заказа, так как один заказ один номер
-
-// Запрос на получение пути к изображению
-$query = "SELECT image_path FROM books WHERE id = ?";
-$stmt = $pdo->prepare($query);
-$stmt->execute([$book_id]); // Передаем сам параметр без указания типа
-$image_path = $stmt->fetch(PDO::FETCH_ASSOC)['image_path'];
-// Проверка на наличие пути к изображению
-if ($image_path) {
-    $image_url = "../pics/" . $image_path; // Путь к изображению
-} else {
-    $image_url = "../pics/default.jpg"; // Путь к изображению по умолчанию
-}
 ?>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -129,6 +112,12 @@ if ($image_path) {
         <div class="order-items">
             <?php foreach ($order_details as $item): ?>
                 <div class="order-item">
+                    <?php
+                        if ($item['image_path']) {
+                            $image_url = "../pics/" . $item['image_path']; // Путь к изображению
+                        } else {
+                            $image_url = "../pics/default.jpg"; // Путь к изображению по умолчанию
+                        }?>
                 <img src="<?= htmlspecialchars($image_url) ?>" alt="<?= htmlspecialchars($item['book_title']) ?>">                    <p><?= htmlspecialchars($item['book_title']) ?></p>
                     <p>Цена: <?= htmlspecialchars($item['book_price']) ?> рублей</p>
                     <p>Количество: <?= htmlspecialchars($item['quantity']) ?></p>
@@ -167,52 +156,7 @@ if ($image_path) {
         ?>
     </main>
 
-    <!-- Подвал -->
-    <footer class="bg-dark text-white py-3">
-        <nav class="container d-flex justify-content-between align-items-center">
-            <!-- Логотип сайта с именем -->
-            <a href="../index.php" class="text-white d-flex align-items-center">
-                <img src="../pics/logo.jpg" alt="Logo" class="me-1" style="width: 50px;">
-                <div class="row">
-                <span class="h4 text-center">TajBooks</span>
-                <span class="h6 text-center">Read Learn Grow</span>
-                </div>
-            </a>
-
-            <!-- Меню с иконками -->
-            <ul class="nav ms-auto">
-                <li class="nav-item ms-3">
-                    <a href="../faq.php" class="nav-link text-white">
-                        <i class="fas fa-question me-2"></i>FAQ
-                    </a>
-                    <ul>
-                        <li><a href="../faq.php/#q1" class="nav-link text-white">Question 1</a></li>
-                        <li><a href="../faq.php/#q2" class="nav-link text-white">Question 2</a></li>
-                        <li><a href="../faq.php/#q3" class="nav-link text-white">Question 3</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item ms-3">
-                <a href="https://t.me/" class="nav-link text-white">
-                        <i class="fas fa-telegram me-2"></i>Телеграм    
-                    </a>
-                    <ul>
-                        <li><a href="https://t.me/taj_books" class="nav-link text-white">Канал</a></li>
-                        <li><a href="https://t.me/komyor_06" class="nav-link text-white">Аккаунт для заказа</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item ms-3">
-                <a href="https://instagram.com/" class="nav-link text-white">
-                <i class="fas fa-instagram me-2"></i>Инстаграм       
-                    </a>
-                    <ul>
-                        <li><a href="https://instagram.com/taj.books/" class="nav-link text-white">Публикации</a></li>
-                        <li><a href="https://instagram.com/" class="nav-link text-white">Аккаунт для заказа</a></li>
-                    </ul>
-                </li>
-        </nav>
-        <p class="text-center mb-4"></p>
-        <p class="text-center mb-2 py-2">&copy; 2025 TajBooks. Все права защищены.</p>
-</footer>
+    <?= require_once "../footer.php"; ?>
 
     <style>
         .order-info {

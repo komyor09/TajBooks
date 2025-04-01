@@ -2,8 +2,7 @@
 session_start();
 require_once "../config/db.php";
 
-// Проверка на админа
-if (!isset($_SESSION['user_id'])) { // || $_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['user_id'])) { 
     header("Location: ../auth/login.php");
     exit();
 }
@@ -15,7 +14,6 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 $order_id = $_GET['id'];
 $order = null;
 
-// Получение данных заказа
 try {
     $stmt = $pdo->prepare("SELECT * FROM orders WHERE id = :id");
     $stmt->execute([':id' => $order_id]);
@@ -27,7 +25,6 @@ try {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $status = $_POST['status'];
 
-    // Обновление статуса заказа
     try {
         $stmt = $pdo->prepare("UPDATE orders SET status = :status WHERE id = :id");
         $stmt->execute([':status' => $status, ':id' => $order_id]);

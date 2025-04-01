@@ -2,35 +2,28 @@
 session_start();
 require_once "../config/db.php";
 
-// Проверка, что пользователь авторизован как администратор
-if (!isset($_SESSION['user_id']) ) { //|| $_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['user_id']) ) { 
     header("Location: ../auth/login.php");
     exit();
 }
 
-// Проверка, что ID заказа передан
 if (!isset($_POST['order_id']) || empty($_POST['order_id'])) {
     die("ID заказа не передан.");
 }
 
 $order_id = $_POST['order_id'];
 
-// Удаление заказа из базы данных
 try {
-    // Удаление связанных товаров в таблице order_items
     $stmt = $pdo->prepare("DELETE FROM order_items WHERE order_id = :order_id");
     $stmt->execute([':order_id' => $order_id]);
 
-    // Теперь можно удалить заказ
     $stmt = $pdo->prepare("DELETE FROM orders WHERE id = :id");
     $stmt->execute([':id' => $order_id]);
 
 
-    // Перенаправление на страницу заказов после успешного удаления
     header("Location: ../admin/orders.php");
     exit();
 } catch (PDOException $e) {
-    // Ошибка при удалении
     $error = "Ошибка удаления заказа: " . $e->getMessage();
 }
 ?>

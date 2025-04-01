@@ -1,29 +1,23 @@
 <?php
-// Подключаем файл для работы с базой данных
 require_once '../config/db.php';
-session_start();  // Start the session to access the logged-in user
+session_start(); 
 
-// Проверка, если форма отправлена
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $user_id = $_SESSION['user_id'];  // Get the logged-in user's ID from the session
+    $user_id = $_SESSION['user_id'];  
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Хешируем новый пароль (если он был введен)
     if (!empty($password)) {
         $hashed_password = md5($password);
     } else {
-        // Если пароль не изменен, оставляем старый (можно сделать запрос на старый пароль)
         $hashed_password = null;
     }
 
-    // Подготовка запроса для обновления данных пользователя
     if ($hashed_password !== null) {
-        // Если пароль был изменен
+       
         $stmt = $pdo->prepare("UPDATE users SET name = :username, password = :password WHERE id = :user_id");
         $stmt->bindParam(':password', $hashed_password, PDO::PARAM_STR);
     } else {
-        // Если пароль не изменен
         $stmt = $pdo->prepare("UPDATE users SET name = :username WHERE id = :user_id");
     }
     
@@ -31,12 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
 
     if ($stmt->execute()) {
-        // Если обновление прошло успешно
         $message = "Данные успешно обновлены!";
         $message_type = "success";
         $_SESSION['name'] = $username;
     } else {
-        // Если возникла ошибка при обновлении
         $message = "Ошибка при обновлении данных.";
         $message_type = "error";
     }
@@ -85,10 +77,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 </style>
 <body>
-    <!-- Шапка -->
     <header class="bg-dark text-white py-3">
         <nav class="container d-flex justify-content-between align-items-center">
-            <!-- Логотип сайта с именем -->
             <a href="../index.php" class="text-white d-flex align-items-center">
                 <img src="../pics/logo.jpg" alt="Logo" class="me-1 text-center" style="width: 50px;">
                 <div class="row">
@@ -97,7 +87,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </a>
 
-            <!-- Меню с иконками -->
             <ul class="nav ms-auto">
                 <li class="nav-item ms-3">
                     <a href="../catalog/catalog.php" class="nav-link text-white">
@@ -128,7 +117,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </ul>
         </nav>
     </header>
-        <!-- Сообщение при выходе -->
         <?php if (isset($_SESSION['message'])): ?>
         <div class="alert alert-success alert-custom text-center shadow" role="alert">
             <i class="fas fa-check-circle me-2"></i> <?php echo $_SESSION['message']; ?>
@@ -139,7 +127,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <main class="mt-5 mb-5 mx-5 card">
         <h1 class="text-center mt-4 mb-4">Настройки профиля</h1>
 
-        <!-- Вывод сообщения об ошибке или успехе -->
         <?php if (!empty($message)): ?>
             <div class="message <?= $message_type ?>">
                 <?= $message ?>
@@ -158,52 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
     </main>
 
-    <!-- Подвал -->
-    <footer class="bg-dark text-white py-3">
-        <nav class="container d-flex justify-content-between align-items-center">
-            <!-- Логотип сайта с именем -->
-            <a href="../index.php" class="text-white d-flex align-items-center">
-                <img src="../pics/logo.jpg" alt="Logo" class="me-1" style="width: 50px;">
-                <div class="row">
-                <span class="h4 text-center">TajBooks</span>
-                <span class="h6 text-center">Read Learn Grow</span>
-                </div>
-            </a>
-
-            <!-- Меню с иконками -->
-            <ul class="nav ms-auto">
-                <li class="nav-item ms-3">
-                    <a href="../faq.php" class="nav-link text-white">
-                        <i class="fas fa-question me-2"></i>FAQ
-                    </a>
-                    <ul>
-                        <li><a href="../faq.php/#q1" class="nav-link text-white">Question 1</a></li>
-                        <li><a href="../faq.php/#q2" class="nav-link text-white">Question 2</a></li>
-                        <li><a href="../faq.php/#q3" class="nav-link text-white">Question 3</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item ms-3">
-                <a href="https://t.me/" class="nav-link text-white">
-                        <i class="fas fa-telegram me-2"></i>Телеграм    
-                    </a>
-                    <ul>
-                        <li><a href="https://t.me/taj_books" class="nav-link text-white">Канал</a></li>
-                        <li><a href="https://t.me/komyor_06" class="nav-link text-white">Аккаунт для заказа</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item ms-3">
-                <a href="https://instagram.com/" class="nav-link text-white">
-                <i class="fas fa-instagram me-2"></i>Инстаграм       
-                    </a>
-                    <ul>
-                        <li><a href="https://instagram.com/taj.books/" class="nav-link text-white">Публикации</a></li>
-                        <li><a href="https://instagram.com/" class="nav-link text-white">Аккаунт для заказа</a></li>
-                    </ul>
-                </li>
-        </nav>
-        <p class="text-center mb-4"></p>
-        <p class="text-center mb-2 py-2">&copy; 2025 TajBooks. Все права защищены.</p>
-</footer>
+    <?= require_once "../footer.php"; ?>
 
     <script>
         function toggleTheme(theme) {

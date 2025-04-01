@@ -2,13 +2,11 @@
 session_start();
 require_once "../config/db.php";
 
-// Проверка, что пользователь авторизован как администратор
-if (!isset($_SESSION['user_id']) ) { //|| $_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['user_id']) ) { 
     header("Location: ../auth/login.php");
     exit();
 }
 
-// Получаем список заказов из базы данных
 try {
     $stmt = $pdo->query("SELECT * FROM orders ORDER BY createdAt DESC");
     $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -105,10 +103,10 @@ try {
                     <td><?= htmlspecialchars($order['createdAt']) ?></td>
                     <td>
                         <?php
-                            if ($order['status'] == 'ОТМЕНЕНО') echo '<span class="status cancelled text-danger" style="border-radius: 10px; padding: 5px; background-color: rgba(255, 0, 0, 0.3); color: white; font-weight: bold;">'; // Красный
-                            if ($order['status'] == 'ДОСТАВЛЕНО') echo '<span class="status success text-success" style="border-radius: 10px; padding: 5px; background-color: rgba(40, 167, 69, 0.3); color: white; font-weight: bold;">'; // Зеленый
-                            if ($order['status'] == 'В ПРОЦЕССЕ') echo '<span class="status in-progress text-warning" style="border-radius: 10px; padding: 5px; background-color: rgba(255, 193, 7, 0.3); color: black; font-weight: bold;">'; // Желтый
-                            if ($order['status'] == 'ОТПРАВЛЕНО') echo '<span class="status sent text-dark" style="border-radius: 10px; padding: 5px; background-color: rgba(0, 0, 0, 0.3); color: white; font-weight: bold;">'; // Чёрный
+                            if ($order['status'] == 'ОТМЕНЕНО') echo '<span class="status cancelled text-danger" style="border-radius: 10px; padding: 5px; background-color: rgba(255, 0, 0, 0.3); color: white; font-weight: bold;">'; 
+                            if ($order['status'] == 'ДОСТАВЛЕНО') echo '<span class="status success text-success" style="border-radius: 10px; padding: 5px; background-color: rgba(40, 167, 69, 0.3); color: white; font-weight: bold;">'; 
+                            if ($order['status'] == 'В ПРОЦЕССЕ') echo '<span class="status in-progress text-warning" style="border-radius: 10px; padding: 5px; background-color: rgba(255, 193, 7, 0.3); color: black; font-weight: bold;">'; 
+                            if ($order['status'] == 'ОТПРАВЛЕНО') echo '<span class="status sent text-dark" style="border-radius: 10px; padding: 5px; background-color: rgba(0, 0, 0, 0.3); color: white; font-weight: bold;">'; 
                             echo htmlspecialchars($order['status']) . "</span>";
                         ?>
                     </td>
@@ -145,7 +143,6 @@ try {
                             </div>
                         </div>
 
-                        <!-- Кнопка для удаления заказа -->
                         <form action="delete_order.php" method="POST" class="d-inline">
                             <input type="hidden" name="order_id" value="<?= htmlspecialchars($order['id']) ?>">
                             <button type="submit" class="btn btn-danger">

@@ -1,17 +1,14 @@
 <?php
 session_start();
-require_once "../config/db.php"; // Подключение к БД
+require_once "../config/db.php"; 
 
-// Инициализация переменных
 $search = '';
-$sort_by = 'created_at DESC'; // По умолчанию сортировка по дате добавления
+$sort_by = 'created_at DESC'; 
 
-// Обработка поиска
 if (isset($_POST['search'])) {
     $search = $_POST['search'];
 }
 
-// Обработка сортировки
 if (isset($_POST['sort'])) {
     switch ($_POST['sort']) {
         case 'title':
@@ -32,7 +29,6 @@ if (isset($_POST['sort'])) {
     }
 }
 
-// Получаем книги из базы данных с учетом поиска и сортировки
 $books = [];
 try {
     $query = "SELECT * FROM books WHERE title LIKE :search OR author LIKE :search ORDER BY $sort_by";
@@ -43,7 +39,6 @@ try {
     $error = "Ошибка получения данных: " . $e->getMessage();
 }
 
-// Обработка удаления книги
 if (isset($_POST['delete'])) {
     $book_id = $_POST['book_id'];
 
