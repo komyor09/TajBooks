@@ -192,3 +192,14 @@ button:hover {
     opacity: 0;
 }
 
+.card-img-for-cart {
+    width: 100%; /* На всю ширину карточки */
+    height: 250px; /* Фиксированная высота */
+    object-fit: contain; /* Вся картинка полностью отображается */
+    background-color: #f8f9fa; /* Фон, если картинка меньше блока */
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 10px; /* Добавляет отступ, чтобы картинка не прилипала к краям */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Лёгкая тень */
+}
+

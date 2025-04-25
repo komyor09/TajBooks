@@ -17,10 +17,11 @@ class Cart
     public function add_to_cart($book_id, $quantity)
     {
         $sql = "INSERT INTO Carts (user_id, book_id, quantity) VALUES (?, ?, ?) 
-                ON DUPLICATE KEY UPDATE quantity = quantity + ?";
+                ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)";
         $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([$this->user_id, $book_id, $quantity, $quantity]);
+        return $stmt->execute([$this->user_id, $book_id, $quantity]);
     }
+    
 
     // 2. Получить товары корзины
     public function get_cart_items()

@@ -1,0 +1,44 @@
+.iphone-notification {
+    position: fixed;
+    top: -100px; /* Начинается за пределами экрана */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    z-index: 9999;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    animation: slideInOut 4s ease-in-out forwards;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.notification-content i {
+    font-size: 18px;
+    color: #4CAF50;
+}
+
+@keyframes slideInOut {
+    0% {
+        top: -100px;
+        opacity: 0;
+    }
+    10% {
+        top: 20px;
+        opacity: 1;
+    }
+    90% {
+        top: 20px;
+        opacity: 1;
+    }
+    100% {
+        top: -100px;
+        opacity: 0;
+    }
+}

@@ -5,18 +5,27 @@ require_once 'config/db.php'; // Подключаем БД
 // Если форма отправлена
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['question'])) {
     $question = trim($_POST['question']);
-    
-    if (!empty($question)) {
-        $stmt = $pdo->prepare("INSERT INTO faq (question, answer) VALUES (:question, '')");
-        $stmt->execute(['question' => $question]);
-        $success = "Ваш вопрос отправлен! Мы ответим на него в ближайшее время.";
+    if (!empty($_SESSION['user_id'])) {
+        if (!empty($question)) {
+            $user_id = $_SESSION['user_id'];
+            $stmt = $pdo->prepare("INSERT INTO faq (question, asked_user_id) VALUES (:question, :asked_user_id)");
+            // Execute once with all parameters
+            $stmt->execute([
+                'question' => $question,
+                'asked_user_id' => $user_id
+            ]);
+            
+            $success = "Ваш вопрос отправлен! Мы ответим на него в ближайшее время.";
+        } else {
+            $error = "Введите корректный вопрос!";
+        }
     } else {
-        $error = "Введите корректный вопрос!";
+        $error = "Сначала войдите!";
     }
 }
 
 // Получаем 5 частозадаваемых вопросов
-$query = $pdo->query("SELECT * FROM faq ORDER BY total DESC LIMIT 5");
+$query = $pdo->query("SELECT * FROM faq ORDER BY viewed DESC LIMIT 5");
 $faqs = $query->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -29,32 +38,7 @@ $faqs = $query->fetchAll(PDO::FETCH_ASSOC);
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/index.css">
-    <style>
-        /* Анимация вопросов */
-        .faq-item {
-            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .faq-item:hover {
-            transform: scale(1.02);
-            background-color: #f8f9fa;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Плавное раскрытие ответа */
-        .answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease, opacity 0.3s ease;
-            opacity: 0;
-        }
-
-        .answer.show {
-            max-height: 200px;
-            opacity: 1;
-        }
-    </style>
+    <link rel="stylesheet" href="css/faq.css">
 </head>
 <body>
 <header class="bg-dark text-white py-3">
@@ -126,7 +110,7 @@ $faqs = $query->fetchAll(PDO::FETCH_ASSOC);
             <?php endforeach; ?>
         </ul>
 <p></p>
-        <!-- Форма для отправки вопроса -->
+        <!-- Форма для отправки вопроса
         <div class="mt-5">
             <h4 class="text-center mb-3">Не нашли ответ? Задайте свой вопрос!</h4>
             <?php if (isset($success)): ?>
@@ -141,7 +125,7 @@ $faqs = $query->fetchAll(PDO::FETCH_ASSOC);
                 </div>
                 <button type="submit" class="btn btn-primary">Отправить</button>
             </form>
-        </div>
+        </div> -->
     </div>
 <p></p>
 <footer class="bg-dark text-white py-3">

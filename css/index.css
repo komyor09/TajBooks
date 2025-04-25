@@ -153,59 +153,7 @@ button:hover {
     border-radius: 50%;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
-.carousel-container {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-}
-.book-slider {
-    display: inline-flex;
-    gap: 15px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    padding: 20px 0;
-}
-.book-slider::-webkit-scrollbar {
-    display: none;
-}
-.book-card {
-    position: relative;
-    overflow: hidden;
-    min-width: 200px;
-    scroll-snap-align: start;
-    transition: transform 0.3s ease-in-out;
-    border-radius: 10px;
-}
-.book-card:hover::before {
-    opacity: 1;
-}
-.book-card:hover {
-    transform: scale(1.05);
-}
-.book-card img {
-    width: 50%;
-    border-radius: 10px;
-    transition: transform 0.3s;
-}
-.carousel-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.6);
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-    z-index: 10;
-}
-.carousel-btn-left {
-    left: 0;
-}
-.carousel-btn-right {
-    right: 0;
-}
+
 .container {
     width: 80%;
     margin: 20px auto;

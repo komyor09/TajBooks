@@ -1,6 +1,3 @@
-<?php
-session_start();
-?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -9,7 +6,7 @@ session_start();
     <title>Корзина</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body class="bg-light">
 
@@ -72,7 +69,11 @@ session_start();
         require_once '../order/cartClass.php';
         require_once '../config/db.php';
         session_start();
-
+        
+        if (!isset($_SESSION['user_id'])) {
+            die("Ошибка: пользователь не авторизован.");
+        }
+        
         $cart = new Cart($pdo, $_SESSION['user_id']);
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -97,7 +98,7 @@ session_start();
             <?php foreach ($items as $item): ?>
                 <div class="col-12 col-md-4">
                     <div class="card mb-4 shadow-lg">
-                        <img src="<?php echo htmlspecialchars("../pics/" . $item['image_path']); ?>" class="card-img" alt="Book Image">
+                        <img src="<?php echo htmlspecialchars("../pics/" . $item['image_path']); ?>" class="card-img-for-cart" alt="<?= $items['title']?>">
                         <div class="card-body">
                             <h5 class="card-title"><?php echo htmlspecialchars($item['title']); ?></h5>
                             <p class="card-text">Цена: <?php echo htmlspecialchars($item['price']); ?> сомони</p>

@@ -29,51 +29,15 @@ if (isset($_POST['book_id'])) {
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<header class="bg-dark text-white py-3">
-        <nav class="container d-flex justify-content-between align-items-center">
-            <!-- Логотип сайта с именем -->
-            <div class="text-center mt-4">
-                <a href="../catalog/catalog.php?page=<?= $_SESSION['catalog_page'] ?>" class="btn btn-secondary"><i class="fas fa-arrow-left"></i></a>
-            </div>
-            <a href="../index.php" class="text-white d-flex align-items-center mx-5">
-                <img src="../pics/logo.jpg" alt="Logo" class="me-1 text-center" style="width: 50px;">
-                <div class="row">
-                <span class="h4 text-center">TajBooks</span>
-                <span class="h6 text-center">Read Learn Grow</span>
-                </div>
-            </a>
+<?php
+    $role = $_SESSION['role'] ?? '';
+    if ($role === 'admin') {
+        require_once('navbars\admin.php');
+    } else {
+        require_once('../navbars/client.php');
+    }
 
-            <!-- Меню с иконками -->
-            <ul class="nav ms-auto">
-                <li class="nav-item ms-3">
-                    <a href="../catalog/catalog.php" class="nav-link text-white">
-                        <i class="fas fa-book me-2"></i>Каталог
-                    </a>
-                </li>
-                <li class="nav-item ms-3">
-                    <a href="../order/cart.php" class="nav-link text-white">
-                        <i class="fas fa-shopping-cart me-2"></i>Корзина
-                    </a>
-                </li>
-                <li class="nav-item ms-3">
-                    <a href="../auth/profile.php" class="nav-link text-white">
-                        <i class="fas fa-user me-2"></i>Личный кабинет
-                    </a>
-                </li>
-                <li class="nav-item ms-3">
-                    <?php if (isset($_SESSION['user_id'])): ?>
-                        <a href="../auth/logout.php" class="nav-link text-white">
-                            <i class="fas fa-sign-out-alt me-2"></i>Выйти
-                        </a>
-                    <?php else: ?>
-                        <a href="../auth/login.php" class="nav-link text-white">
-                            <i class="fas fa-sign-in-alt me-2"></i>Войти / Регистрация
-                        </a>
-                    <?php endif; ?>
-                </li>
-            </ul>
-        </nav>
-    </header>
+    ?>
         <!-- Сообщение при выходе -->
         <?php if (isset($_SESSION['message'])): ?>
         <div class="alert alert-success alert-custom text-center shadow" role="alert">
