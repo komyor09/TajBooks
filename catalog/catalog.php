@@ -2,7 +2,7 @@
 session_start();
 require_once '../config/db.php';
 
-$limit = 60;
+$limit = 9;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
@@ -140,24 +140,39 @@ $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="row p-3">
                     <div class="col-md-3">
                         <label class="form-label">Цена (сомони):</label>
-                        <input type="range" name="min_price" min="50" max="1000" value="<?= $_GET['min_price'] ?? 50 ?>" class="form-range">
-                        <input type="range" name="max_price" min="50" max="1000" value="<?= $_GET['max_price'] ?? 1000 ?>" class="form-range">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <input type="number" id="min_price_value" class="form-control form-control-sm" style="width: 80px;" 
+                                value="<?= $_GET['min_price'] ?? 50 ?>" min="50" max="1000">
+                            <span>-</span>
+                            <input type="number" id="max_price_value" class="form-control form-control-sm" style="width: 80px;" 
+                                value="<?= $_GET['max_price'] ?? 1000 ?>" min="50" max="1000">
+                        </div>
+                        <input type="range" name="min_price" id="min_price" min="50" max="1000" 
+                            value="<?= $_GET['min_price'] ?? 50 ?>" class="form-range mb-2">
+                        <input type="range" name="max_price" id="max_price" min="50" max="1000" 
+                            value="<?= $_GET['max_price'] ?? 1000 ?>" class="form-range">
                     </div>
+                    
                     <div class="col-md-3">
                         <label class="form-label">Год выпуска:</label>
-                        <input type="range" name="min_year" min="2010" max="2025" value="<?= $_GET['min_year'] ?? 2010 ?>" class="form-range">
-                        <input type="range" name="max_year" min="2010" max="2025" value="<?= $_GET['max_year'] ?? 2025 ?>" class="form-range">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <input type="number" id="min_year_value" class="form-control form-control-sm" style="width: 80px;" 
+                                value="<?= $_GET['min_year'] ?? 2010 ?>" min="2010" max="2025">
+                            <span>-</span>
+                            <input type="number" id="max_year_value" class="form-control form-control-sm" style="width: 80px;" 
+                                value="<?= $_GET['max_year'] ?? 2025 ?>" min="2010" max="2025">
+                        </div>
+                        <input type="range" name="min_year" id="min_year" min="2010" max="2025" 
+                            value="<?= $_GET['min_year'] ?? 2010 ?>" class="form-range mb-2">
+                        <input type="range" name="max_year" id="max_year" min="2010" max="2025" 
+                            value="<?= $_GET['max_year'] ?? 2025 ?>" class="form-range">
                     </div>
-                    <!-- <div class="col-md-3">
-                        <label class="form-label">Рейтинг:</label>
-                        <input type="range" name="rating" min="1" max="5" value="<?= $_GET['rating'] ?? 3 ?>" class="form-range">
-                    </div> -->
                 </div>
 
                 <button type="submit" class="btn btn-success w-100 mt-3"><i class="fa fa-filter"></i> Фильтровать</button>
             </form>
         </div>
-
+        <p></p>
         <div class="row">
             <?php foreach ($books as $book): ?>
                 <div class="col-md-4 mb-4">
@@ -207,6 +222,7 @@ unset($clean_params['page']);
         <p class="text-center mb-2 py-2">&copy; 2025 TajBooks. Все права защищены.</p>
     </footer>
 
+    <script src="js/catalog.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

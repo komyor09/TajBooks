@@ -13,55 +13,15 @@ session_start();
     <link rel="stylesheet" href="../css/index.css">
 </head>
 <body class="bg-light">
-<header class="bg-dark text-white py-3">
-        <nav class="container d-flex justify-content-between align-items-center">
-            <!-- Логотип сайта с именем -->
-            <a href="../index.php" class="text-white d-flex align-items-center">
-                <img src="../pics/logo.jpg" alt="Logo" class="me-1 text-center" style="width: 50px;">
-                <div class="row">
-                <span class="h4 text-center">TajBooks</span>
-                <span class="h6 text-center">Read Learn Grow</span>
-                </div>
-            </a>
-
-            <!-- Меню с иконками -->
-            <ul class="nav ms-auto">
-                <li class="nav-item ms-3">
-                    <a href="../catalog/catalog.php" class="nav-link text-white">
-                        <i class="fas fa-book me-2"></i>Каталог
-                    </a>
-                </li>
-                <li class="nav-item ms-3">
-                    <a href="../order/cart.php" class="nav-link text-white">
-                        <i class="fas fa-shopping-cart me-2"></i>Корзина
-                    </a>
-                </li>
-                <li class="nav-item ms-3">
-                    <a href="../auth/profile.php" class="nav-link text-white">
-                        <i class="fas fa-user me-2"></i>Личный кабинет
-                    </a>
-                </li>
-                <li class="nav-item ms-3">
-                    <?php if (isset($_SESSION['user_id'])): ?>
-                        <a href="../auth/logout.php" class="nav-link text-white">
-                            <i class="fas fa-sign-out-alt me-2"></i>Выйти
-                        </a>
-                    <?php else: ?>
-                        <a href="../auth/login.php" class="nav-link text-white">
-                            <i class="fas fa-sign-in-alt me-2"></i>Войти / Регистрация
-                        </a>
-                    <?php endif; ?>
-                </li>
-            </ul>
-        </nav>
-    </header>
-        <!-- Сообщение при выходе -->
-        <?php if (isset($_SESSION['message'])): ?>
-        <div class="alert alert-success alert-custom text-center shadow" role="alert">
-            <i class="fas fa-check-circle me-2"></i> <?php echo $_SESSION['message']; ?>
-        </div>
-        <?php unset($_SESSION['message']); ?>
-    <?php endif; ?>
+<?php
+    $role = $_SESSION['role'] ?? '';
+    if ($role === 'admin') {
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/navbars/admin.php');
+    } else {
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/navbars/client.php');
+    }
+    require_once($_SERVER['DOCUMENT_ROOT'] . '/navbars/iphone-notification.php');
+?>
 
 
 <main class="container mt-5 mb-5">
@@ -83,7 +43,7 @@ session_start();
                             echo '<div class="alert alert-danger">Вы не авторизованы!</div>';
                         } else {
                             try {
-                                $cart = new Cart($pdo, $user_id); // Передаём объект PDO и user_id
+                                $cart = new Cart($pdo, $user_id);
                                 error_reporting(E_ALL);
                                 ini_set('display_errors', 1);
                                 if ($cart->add_to_cart($book_id, $_POST['quantity'])) {

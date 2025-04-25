@@ -1,11 +1,11 @@
 <?php
 session_start();
-require_once '../config/db.php'; // Подключение к БД
+require_once '../config/db.php';
 
-// Получаем ID книги из URL
+
 if (isset($_POST['book_id'])) {
     $book_id = (int)$_POST['book_id'];
-    $stmt = $pdo->prepare("SELECT * FROM Books WHERE id = :id");
+    $stmt = $pdo->prepare("SELECT * FROM book WHERE id = :id");
     $stmt->bindParam(':id', $book_id, PDO::PARAM_INT);
     $stmt->execute();
     $book = $stmt->fetch(PDO::FETCH_ASSOC);
