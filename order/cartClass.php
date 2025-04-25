@@ -102,7 +102,7 @@ class Cart
         $item = $stmt->fetch();
     
         if ($item) {
-            $stmt = $this->pdo->prepare("UPDATE cartҚ SET quantity = quantity + 1 WHERE user_id = ? AND book_id = ?");
+            $stmt = $this->pdo->prepare("UPDATE cart SET quantity = quantity + 1 WHERE user_id = ? AND book_id = ?");
             $stmt->execute([$this->user_id, $book_id]);
         }
     }

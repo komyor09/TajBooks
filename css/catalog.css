@@ -7,3 +7,28 @@
 .form-range::-ms-thumb {
     background: #198754;
 }
+.book-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+.quantity-control {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    font-size: 0.7rem;
+}
+.price-tag {
+    font-weight: bold;
+    color: #0d6efd;
+    font-size: 1.1rem;
+}
