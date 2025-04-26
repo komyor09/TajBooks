@@ -2,40 +2,49 @@
 session_start();
 require_once "../config/db.php";
 
-
 $search = '';
-$sort_by = 'created_at DESC';
-
+$sort_by = 'b.created_at DESC';
 
 if (isset($_POST['search'])) {
     $search = $_POST['search'];
 }
 
-
 if (isset($_POST['sort'])) {
     switch ($_POST['sort']) {
         case 'title':
-            $sort_by = 'title ASC';
+            $sort_by = 'b.title ASC';
             break;
         case 'price':
-            $sort_by = 'price ASC';
+            $sort_by = 'b.price ASC';
             break;
         case 'year':
-            $sort_by = 'year ASC';
+            $sort_by = 'b.year ASC';
             break;
         case 'author':
-            $sort_by = 'author ASC';
+            $sort_by = 'a.name ASC';
             break;
         case 'created_at':
-            $sort_by = 'created_at DESC';
+            $sort_by = 'b.created_at DESC';
             break;
     }
 }
 
-
 $books = [];
 try {
-    $query = "SELECT * FROM book WHERE title LIKE :search ORDER BY $sort_by";
+    $query = "
+        SELECT b.id, b.title, b.price, b.year, b.image_path, b.created_at,
+               a.name AS author_name,
+               f.name AS format_name,
+               GROUP_CONCAT(g.name SEPARATOR ', ') AS genres
+        FROM book b
+        LEFT JOIN authors a ON b.author_id = a.id
+        LEFT JOIN formats f ON b.format_id = f.id
+        LEFT JOIN book_genre bg ON b.id = bg.book_id
+        LEFT JOIN genre g ON bg.genre_id = g.id
+        WHERE b.title LIKE :search OR a.name LIKE :search
+        GROUP BY b.id
+        ORDER BY $sort_by
+    ";
     $stmt = $pdo->prepare($query);
     $stmt->execute([':search' => "%$search%"]);
     $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -43,13 +52,16 @@ try {
     $error = "Ошибка получения данных: " . $e->getMessage();
 }
 
-// Обработка удаления книги
 if (isset($_POST['delete'])) {
     $book_id = $_POST['book_id'];
 
     try {
+        $stmt = $pdo->prepare("DELETE FROM book_genre WHERE book_id = :id");
+        $stmt->execute([':id' => $book_id]);
+        
         $stmt = $pdo->prepare("DELETE FROM book WHERE id = :id");
         $stmt->execute([':id' => $book_id]);
+        
         header("Location: manage_books.php");
         exit();
     } catch (PDOException $e) {
@@ -57,7 +69,6 @@ if (isset($_POST['delete'])) {
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -73,16 +84,15 @@ if (isset($_POST['delete'])) {
 <body>
 
 <header class="bg-dark text-white py-3">
-        <nav class="container_1 d-flex justify-content-between align-items-center p-3">
-            <!-- Логотип сайта с именем -->
-            <a href="../index.php" class="text-white d-flex align-items-center">
-                <img src="../pics/logo.jpg" alt="Logo" class="me-1 text-center" style="width: 50px;">
-                <div class="row">
-                    <span class="h4 text-center">TajBooks</span>
-                    <span class="h6 text-center">Read Learn Grow</span>
-                </div>
-            </a>
-            <ul class="nav ms-auto">
+    <nav class="container_1 d-flex justify-content-between align-items-center p-3">
+        <a href="../index.php" class="text-white d-flex align-items-center">
+            <img src="../pics/logo.jpg" alt="Logo" class="me-1 text-center" style="width: 50px;">
+            <div class="row">
+                <span class="h4 text-center">TajBooks</span>
+                <span class="h6 text-center">Read Learn Grow</span>
+            </div>
+        </a>
+        <ul class="nav ms-auto">
             <li class="nav-item ms-3">
                 <a href="../catalog/catalog.php" class="nav-link text-white">
                     <i class="fas fa-book me-2"></i>Каталог
@@ -115,11 +125,10 @@ if (isset($_POST['delete'])) {
                 <?php endif; ?>
             </li>
         </ul>
-            </div>
-        </nav>
-    </header>
+    </nav>
+</header>
 
-    <div class="container mt-5">
+<div class="container mt-5">
     <h2>Управление книгами</h2>
 
     <?php if (isset($error)): ?>
@@ -135,11 +144,11 @@ if (isset($_POST['delete'])) {
 
         <label for="sort" class="form-label">Сортировать по:</label>
         <select class="form-select" id="sort" name="sort" onchange="this.form.submit()">
-            <option value="created_at" <?= $sort_by == 'created_at DESC' ? 'selected' : '' ?>>Дата добавления</option>
-            <option value="title" <?= $sort_by == 'title ASC' ? 'selected' : '' ?>>Название</option>
-            <option value="price" <?= $sort_by == 'price ASC' ? 'selected' : '' ?>>Цена</option>
-            <option value="year" <?= $sort_by == 'year ASC' ? 'selected' : '' ?>>Год</option>
-            <option value="author" <?= $sort_by == 'author ASC' ? 'selected' : '' ?>>Автор</option>
+            <option value="created_at" <?= $sort_by == 'b.created_at DESC' ? 'selected' : '' ?>>Дата добавления</option>
+            <option value="title" <?= $sort_by == 'b.title ASC' ? 'selected' : '' ?>>Название</option>
+            <option value="price" <?= $sort_by == 'b.price ASC' ? 'selected' : '' ?>>Цена</option>
+            <option value="year" <?= $sort_by == 'b.year ASC' ? 'selected' : '' ?>>Год</option>
+            <option value="author" <?= $sort_by == 'a.name ASC' ? 'selected' : '' ?>>Автор</option>
         </select>
     </form>
 
@@ -149,8 +158,9 @@ if (isset($_POST['delete'])) {
                 <th>Название</th>
                 <th>Автор</th>
                 <th>Цена</th>
-                <th>Жанр</th>
+                <!-- <th>Жанры</th> -->
                 <th>Год</th>
+                <th>Формат</th>
                 <th>Изображение</th>
                 <th>Действия</th>
             </tr>
@@ -159,10 +169,11 @@ if (isset($_POST['delete'])) {
             <?php foreach ($books as $book): ?>
                 <tr>
                     <td><?= htmlspecialchars($book['title']) ?></td>
-                    <td><?= htmlspecialchars($book['author']) ?></td>
+                    <td><?= htmlspecialchars($book['author_name']) ?></td>
                     <td><?= htmlspecialchars($book['price']) ?> руб.</td>
-                    <td><?= htmlspecialchars($book['genre']) ?></td>
+                    <!-- <td><?= htmlspecialchars($book['genres'] ?? '') ?></td> -->
                     <td><?= htmlspecialchars($book['year']) ?></td>
+                    <td><?= htmlspecialchars($book['format_name']) ?></td>
                     <td>
                         <?php if ($book['image_path']): ?>
                             <img src="../pics/<?= htmlspecialchars($book['image_path']) ?>" alt="Обложка книги" width="50">
@@ -171,14 +182,15 @@ if (isset($_POST['delete'])) {
                         <?php endif; ?>
                     </td>
                     <td nowrap>
-                        <form action="../admin/edit_book.php" method="POST" style="all: unset !important;">
+                        <form action="../admin/edit_book.php" method="POST" style="display: inline;">
                             <input type="hidden" name="book_id" value="<?= $book['id'] ?>">
                             <button type="submit" class="btn btn-success"><i class="fas fa-edit"></i></button>
                         </form>
-                        &emsp;
-                        <form action="../admin/manage_books.php" method="POST" style="all: unset !important;">
+                        <form action="../admin/manage_books.php" method="POST" style="display: inline;">
                             <input type="hidden" name="book_id" value="<?= $book['id'] ?>">
-                            <button type="submit" name="delete" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                            <button type="submit" name="delete" class="btn btn-danger" onclick="return confirm('Вы уверены, что хотите удалить эту книгу?')">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </form>
                     </td>
                 </tr>
