@@ -2,16 +2,15 @@
 session_start();
 require_once "../config/db.php";
 
-// Проверка, что пользователь авторизован как администратор
 if (!isset($_SESSION['user_id']) ) { //|| $_SESSION['role'] !== 'admin') {
     header("Location: ../auth/login.php");
     exit();
 }
 
-// Получаем список заказов из базы данных
 try {
-    $stmt = $pdo->query("SELECT * FROM orders ORDER BY createdAt DESC");
+    $stmt = $pdo->query("SELECT o.*, username as client_name FROM orders o join users on users.id = o.user_id ORDER BY o.createdAt DESC");
     $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt = $pdo->prepare("Select username from users WHERE id = :u_id");
 } catch (PDOException $e) {
     $error = "Ошибка получения данных: " . $e->getMessage();
 }

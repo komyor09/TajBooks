@@ -9,7 +9,7 @@ if (!isset($_GET['id'])) {
 $bookId = (int)$_GET['id'];
 
 try {
-    $stmt = $pdo->prepare("SELECT * FROM books WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT * FROM book WHERE id = ?");
     $stmt->execute([$bookId]);
     $book = $stmt->fetch(PDO::FETCH_ASSOC);
     
@@ -21,7 +21,7 @@ try {
     ?>
     <div class="row">
         <div class="col-md-4">
-            <img src="/pics/<?= htmlspecialchars($book['image_path']) ?>" 
+            <img src="../../pics/<?= htmlspecialchars($book['image_path']) ?>" 
                 class="img-fluid" 
                 alt="<?= htmlspecialchars($book['title']) ?>">
         </div>

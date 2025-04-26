@@ -59,11 +59,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (currentPage < pageCount - 1) {
             goToPage(currentPage + 1);
         } else {
-            goToPage(0); // Циклическая навигация
+            goToPage(0);
         }
     });
     
-    // Автопрокрутка
     let autoScroll = setInterval(() => {
         const scrollPos = carouselContainer.scrollLeft;
         const cardWidth = bookCards[0].offsetWidth + 24;
@@ -76,7 +75,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 5000);
     
-    // Пауза при наведении
     carouselContainer.addEventListener('mouseenter', () => clearInterval(autoScroll));
     carouselContainer.addEventListener('mouseleave', () => {
         autoScroll = setInterval(() => {
@@ -92,18 +90,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     });
     
-    // Обработчик для кнопки "Купить"
     document.querySelectorAll('.add-to-cart').forEach(btn => {
         btn.addEventListener('click', function() {
             const bookId = this.getAttribute('data-book-id');
             
-            // Анимация добавления
             const originalHTML = this.innerHTML;
             this.innerHTML = '<i class="fas fa-check"></i> Добавлено';
             this.style.backgroundColor = '#00b894';
             this.classList.add('animate__animated', 'animate__pulse');
             
-            // Отправка AJAX запроса
             fetch('/cart/add.php', {
                 method: 'POST',
                 headers: {
@@ -114,7 +109,6 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Обновляем счетчик корзины в шапке
                     const cartCount = document.querySelector('.cart-count');
                     if (cartCount) {
                         cartCount.textContent = data.cart_count;
@@ -135,33 +129,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Обработчик для быстрого просмотра
-    document.querySelectorAll('.quick-view').forEach(btn => {
+    document.querySelectorAll('.quick-vieww').forEach(btn => {
         btn.addEventListener('click', function() {
             const bookId = this.getAttribute('data-book-id');
             openQuickViewModal(bookId);
         });
     });
     
-    // Адаптация при изменении размера окна
     window.addEventListener('resize', function() {
-        // Обновляем количество книг на странице
         if (window.innerWidth < 768) booksPerPage = 1;
         else if (window.innerWidth < 992) booksPerPage = 2;
         else if (window.innerWidth < 1200) booksPerPage = 3;
         else booksPerPage = 4;
         
-        // Переходим на первую страницу
         goToPage(0);
     });
 });
 
-// Функция для открытия модального окна быстрого просмотра
 function openQuickViewModal(bookId) {
     fetch(`/quick_view.php?id=${bookId}`)
         .then(response => response.text())
         .then(html => {
-            // Создаем модальное окно с улучшенным дизайном
             const modal = document.createElement('div');
             modal.className = 'modal fade';
             modal.id = 'quickViewModal';
@@ -175,7 +163,7 @@ function openQuickViewModal(bookId) {
                         <div class="modal-body p-4">
                             <div class="row">
                                 <div class="col-md-5">
-                                    <img src="/pics/${bookId}.jpg" class="img-fluid rounded-3 shadow" alt="Обложка книги" style="max-height: 400px; object-fit: contain;">
+                                    <img src="../pics/${bookId}.jpg" class="img-fluid rounded-3 shadow" alt="Обложка книги" style="max-height: 400px; object-fit: contain;">
                                 </div>
                                 <div class="col-md-7">
                                     ${html}
@@ -186,12 +174,12 @@ function openQuickViewModal(bookId) {
                             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                                 <i class="fas fa-times me-2"></i>Закрыть
                             </button>
-                            <a href="/catalog/book_details.php?id=${bookId}" class="btn btn-primary">
+                            <!-- <a href="/catalog/book_details.php?id=${bookId}" class="btn btn-primary">
                                 <i class="fas fa-info-circle me-2"></i>Подробнее
-                            </a>
-                            <button class="btn btn-success add-to-cart-from-modal" data-book-id="${bookId}">
+                            </a> --!>
+                            <!-- <button class="btn btn-success add-to-cart-from-modal" data-book-id="${bookId}">
                                 <i class="fas fa-shopping-cart me-2"></i>В корзину
-                            </button>
+                            </button> --!>
                         </div>
                     </div>
                 </div>
@@ -201,10 +189,8 @@ function openQuickViewModal(bookId) {
             const modalInstance = new bootstrap.Modal(modal);
             modalInstance.show();
             
-            // Обработчик для кнопки добавления в корзину из модального окна
             modal.querySelector('.add-to-cart-from-modal')?.addEventListener('click', function() {
                 const bookId = this.getAttribute('data-book-id');
-                // Здесь можно добавить логику добавления в корзину
                 this.innerHTML = '<i class="fas fa-check me-2"></i>Добавлено';
                 this.classList.add('btn-success');
                 setTimeout(() => {
@@ -212,7 +198,6 @@ function openQuickViewModal(bookId) {
                 }, 1500);
             });
             
-            // Удаляем модальное окно после закрытия
             modal.addEventListener('hidden.bs.modal', () => {
                 document.body.removeChild(modal);
             });

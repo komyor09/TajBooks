@@ -94,7 +94,7 @@ body {
     transform: scale(1.05);
 }
 .book-card img {
-    width: 50%;
+    width: 100%;
     border-radius: 10px;
     transition: transform 0.3s;
 }

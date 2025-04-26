@@ -1,5 +1,5 @@
 <?php
-require '../config/db.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/config/db.php';
 
 
 class Cart

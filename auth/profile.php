@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Проверяем авторизацию
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['name'])) {
     header('Location: ../auth/login.php');
     exit();
@@ -203,16 +202,22 @@ if (!isset($_SESSION['message'])) {
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="card quick-action-card h-100 border-0 shadow-sm">
-                                <div class="card-body text-center py-4">
-                                    <i class="fas fa-heart fa-3x mb-3 text-danger"></i>
-                                    <h5>Избранное</h5>
-                                    <p class="text-muted">Ваши сохраненные книги</p>
-                                    <a href="../catalog/favorites.php" class="btn btn-outline-danger">Перейти</a>
-                                </div>
+                        <div class="col-md-6 position-relative">
+                        <div class="card quick-action-card h-100 border-0 shadow-sm position-relative">
+                            <div class="position-absolute top-0 start-0 w-100 h-100 bg-light opacity-75" style="z-index: 1;"></div>
+                            
+                            <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 2;">
+                                <span class="badge bg-dark text-white fs-5 py-2 px-3 rounded-pill rotate-5">СКОРО</span>
+                            </div>
+                            
+                            <div class="card-body text-center py-4" style="filter: grayscale(1%); opacity: 0.99;">
+                                <i class="fas fa-heart fa-3x mb-3 text-danger"></i>
+                                <h5>Избранное</h5>
+                                <p class="text-muted">Ваши сохраненные книги</p>
+                                <a href="#" class="btn btn-outline-danger disabled">Перейти</a>
                             </div>
                         </div>
+                    </div>
                         <div class="col-md-6">
                             <div class="card quick-action-card h-100 border-0 shadow-sm">
                                 <div class="card-body text-center py-4">

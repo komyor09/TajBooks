@@ -5,6 +5,13 @@ session_start();
 $message = '';
 $message_type = '';
 
+if (isset($_SESSION['user_id'])) {
+    $_SESSION['message'] = "Вы уже авторизованы!";
+    $_SESSION['message_type'] = "warning";
+    header("Location: profile.php");
+    exit();
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $identifier = trim($_POST['identifier']);
     $password = $_POST['password'];
@@ -31,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $message = "Пользователь не найден!";
         $message_type = "error";
+        header('Location: /auth/register.php');
     }
 }
 ?>
@@ -45,11 +53,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../css/index.css">
 </head>
 <body>
-    <header class="bg-dark text-white py-3">
-        <div class="container d-flex justify-content-between align-items-center">
-            <a href="../index.php" class="text-white h4">TajBooks</a>
-        </div>
-    </header>
+    <?php
+        $role = $_SESSION['role'] ?? '';
+        if ($role === 'admin') {
+            require_once($_SERVER['DOCUMENT_ROOT'] . '/navbars/admin.php');
+        } else {
+            require_once($_SERVER['DOCUMENT_ROOT'] . '/navbars/client.php');
+        }
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/navbars/iphone-notification.php');
+    ?>
 
     <div class="container mt-4">
         <?php if ($message): ?>

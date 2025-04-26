@@ -57,9 +57,12 @@ $books = getPopularBooks($pdo, 8, 0);
                 <img src="<?= '/../../pics/' . htmlspecialchars($book['image_path']) ?>" 
                     alt="<?= htmlspecialchars($book['title']) ?>" 
                     class="book-image">
-                <div class="quick-view" data-book-id="<?= $book['id'] ?>">
-                    <i class="fas fa-eye"></i> Быстрый просмотр
+                <form action="catalog/book_details.php" method="POST">
+                    <input type="number" name="book_id" value = "<?= $book['id']?>" hidden>
+                    <div class="quick-view" data-book-id="<?= $book['id'] ?>">
+                    <button><i class="fas fa-eye"></i> Просмотр </button>
                 </div>
+                </form>
             </div>
             <div class="book-details">
                 <h3 class="book-title"><?= htmlspecialchars($book['title']) ?></h3>
@@ -75,9 +78,9 @@ $books = getPopularBooks($pdo, 8, 0);
                         <?php endif; ?>
                         <span class="book-price"><?= number_format($book['price'], 0, '', ' ') ?> сомони</span>
                     </div>
-                    <button class="add-to-cart" data-book-id="<?= $book['id'] ?>">
+                    <!-- <button class="add-to-cart" data-book-id="<?= $book['id'] ?>">
                         <i class="fas fa-shopping-cart"></i> Купить
-                    </button>
+                    </button> -->
                 </div>
             </div>
         </div>
