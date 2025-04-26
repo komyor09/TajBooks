@@ -10,7 +10,7 @@ $book_id = $_POST['book_id'];
 $book = null;
 
 try {
-    $stmt = $pdo->prepare("SELECT * FROM books WHERE id = :id");
+    $stmt = $pdo->prepare("SELECT * FROM book WHERE id = :id");
     $stmt->execute([':id' => $book_id]);
     $book = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' and $_POST['editing']) {
     $image_path = $_POST['image_path'];
 
     try {
-        $stmt = $pdo->prepare("UPDATE books SET title = :title, author = :author, price = :price, genre = :genre, year = :year, image_path = :image_path WHERE id = :id");
+        $stmt = $pdo->prepare("UPDATE book SET title = :title, author = :author, price = :price, genre = :genre, year = :year, image_path = :image_path WHERE id = :id");
         $stmt->execute([
             ':title' => $title,
             ':author' => $author,

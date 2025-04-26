@@ -114,7 +114,7 @@ $pdo = null;
                         <th>Дата заказа</th>
                         <th>Статус</th>
                         <th>Сумма</th>
-                        <th>Действия</th>
+                        <!-- <th>Действия</th> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -133,13 +133,13 @@ $pdo = null;
                             ?>
                                 </td>
                                 <td><?= htmlspecialchars($order['total_amount']) ?> рублей</td>
-                                <td>
-                                    <!-- Добавляем скрытое поле с id заказа -->
+                                <!-- <td>
+                                 
                                     <input type="hidden" name="order_id" value="<?= htmlspecialchars($order['id']) ?>">
                                     <button type="submit" class="btn btn-primary">
                                         Подробнее
                                     </button>
-                                </td>
+                                </td> -->
                             </form>
                         </tr>
                     <?php endforeach; ?>

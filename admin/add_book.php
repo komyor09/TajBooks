@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         try {
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            $stmt = $pdo->prepare("INSERT INTO books (title, author, price, description, genre, publisher, year, language, format, rating, availability, image_path) 
+            $stmt = $pdo->prepare("INSERT INTO book (title, author, price, description, genre, publisher, year, language, format, rating, availability, image_path) 
                                    VALUES (:title, :author, :price, :description, :genre, :publisher, :year, :language, :format, :rating, :availability, :image_path)");
             $stmt->execute([
                 ':title' => $title,

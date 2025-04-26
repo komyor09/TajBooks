@@ -1,17 +1,17 @@
 <?php
 session_start();
-require_once "../config/db.php"; // Подключение к БД
+require_once "../config/db.php";
 
-// Инициализация переменных
+
 $search = '';
-$sort_by = 'created_at DESC'; // По умолчанию сортировка по дате добавления
+$sort_by = 'created_at DESC';
 
-// Обработка поиска
+
 if (isset($_POST['search'])) {
     $search = $_POST['search'];
 }
 
-// Обработка сортировки
+
 if (isset($_POST['sort'])) {
     switch ($_POST['sort']) {
         case 'title':
@@ -32,10 +32,10 @@ if (isset($_POST['sort'])) {
     }
 }
 
-// Получаем книги из базы данных с учетом поиска и сортировки
+
 $books = [];
 try {
-    $query = "SELECT * FROM books WHERE title LIKE :search OR author LIKE :search ORDER BY $sort_by";
+    $query = "SELECT * FROM book WHERE title LIKE :search ORDER BY $sort_by";
     $stmt = $pdo->prepare($query);
     $stmt->execute([':search' => "%$search%"]);
     $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -48,7 +48,7 @@ if (isset($_POST['delete'])) {
     $book_id = $_POST['book_id'];
 
     try {
-        $stmt = $pdo->prepare("DELETE FROM books WHERE id = :id");
+        $stmt = $pdo->prepare("DELETE FROM book WHERE id = :id");
         $stmt->execute([':id' => $book_id]);
         header("Location: manage_books.php");
         exit();
@@ -86,11 +86,6 @@ if (isset($_POST['delete'])) {
             <li class="nav-item ms-3">
                 <a href="../catalog/catalog.php" class="nav-link text-white">
                     <i class="fas fa-book me-2"></i>Каталог
-                </a>
-            </li>
-            <li class="nav-item ms-3">
-                <a href="../order/cart.php" class="nav-link text-white">
-                    <i class="fas fa-shopping-cart me-2"></i>Корзина
                 </a>
             </li>
             <li class="nav-item ms-3">
